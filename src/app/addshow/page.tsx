@@ -1,8 +1,8 @@
 import Button from "@/components/Button/button";
 import Popup from "@/components/Popup/popup";
 
-export default function Home() {
-  const close = () => window.close();
+export default function AddShow() {
+  // const close = () => window.close();
 
   return (
     <Popup title="Time to unwind?">
