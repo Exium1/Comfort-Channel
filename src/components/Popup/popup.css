@@ -1,0 +1,13 @@
+.popup-wrapper {
+    height: 100%;
+    width: 100%;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    h1 {
+        font-size: 22px;
+        color: #DDE0ED;
+    }
+}

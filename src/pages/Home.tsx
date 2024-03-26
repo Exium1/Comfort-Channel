@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom"
+import { Popup } from "~src/components/Popup/popup";
 
 export const Home = () => {
     const navigate = useNavigate();
 
     return (
-        <div>
-            <h1 className="text-5xl underline">Home</h1>
+        <Popup title="Time to unwind?">
             <button onClick={() => navigate("/addshow")}>Add Show</button>
-        </div>
+        </Popup>
     );
 }
