@@ -1,0 +1,30 @@
+.show-list-wrapper {
+    background-color: #F9DCEA;
+    padding: 10px;
+    border-radius: 10px;
+
+    .show-list-season-selector {
+        background-color: #F0BCD4;
+        color: #8A374E;
+        display: flex;
+        border-radius: 5px;
+        align-items: center;
+        padding: 5px 10px;
+        gap: 5px;
+        font-size: 14px;
+    }
+
+    .show-list-episodes {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+
+        .show-list-episode-item {
+            color: #000000;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+    }
+}

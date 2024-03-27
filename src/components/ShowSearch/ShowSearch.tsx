@@ -38,7 +38,7 @@ export const ShowSearch = () => {
     return (
         <div className='flex flex-col gap-3'>
             <ShowInput handleQuery={handleQuery}/>
-            {showList.map((show) => <ShowCard key={show.id} show={show}/>)}
+            {showList.map((show) => <ShowCard key={show.id} show={show} viewEpsButton={true}/>)}
         </div>
     )
 }
