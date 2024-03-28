@@ -7,6 +7,7 @@
 
     .show-input-logo {
         border-radius: 10px;
+        background-color: black;
     }
 
     .show-input-field {
@@ -23,5 +24,17 @@
         &:focus {
             outline: none;
         }
+    }
+}
+
+.show-input-platforms {
+    background-color: #f0e6eb;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    display:none;
+
+    &.show {
+        display: flex;
     }
 }

@@ -11,7 +11,7 @@ export const ShowDetails = () => {
             image: "https://is1-ssl.mzstatic.com/image/thumb/Video113/v4/83/cf/ec/83cfeca9-4f8a-bcc9-4039-c270537079d4/mzl.ylczufvu.lsr/600x600bb.jpg",
             seasonCount: 6,
             episodeCount: 43,
-            added: false,
+            added: 0,
             episodes: [
                 {
                     id: "1",
