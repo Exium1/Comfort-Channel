@@ -1,0 +1,23 @@
+.popup-wrapper {
+    height: 100%;
+    width: 100%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+        font-size: 22px;
+        color: #DDE0ED;
+    }
+
+    .popup-title {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .popup-content {
+        display: flex;
+        flex-direction: column;
+    }
+}

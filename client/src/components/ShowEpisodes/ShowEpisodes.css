@@ -1,0 +1,53 @@
+.show-list-wrapper {
+    background-color: #F9DCEA;
+    padding: 10px;
+    border-radius: 10px;
+
+    .show-list-season-selector {
+        background-color: #F0BCD4;
+        color: #8A374E;
+        display: flex;
+        border-radius: 5px;
+        align-items: center;
+        padding: 5px 10px;
+        gap: 5px;
+        font-size: 14px;
+    }
+
+    .show-list-seasons {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        color: black;
+        background-color: #dfa1be;
+        gap: 5px;
+        padding: 10px;
+        position: absolute;
+        border-radius: 5px;
+
+        .show-list-seasons-item {
+            text-wrap: nowrap;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        &.show {
+            display: flex;
+        }
+    }
+
+    .show-list-episodes {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+
+        .show-list-episode-item {
+            color: #000000;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            text-align: left;
+        }
+    }
+}

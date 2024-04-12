@@ -1,0 +1,40 @@
+.show-input-wrapper {
+    display: flex;
+    gap: 10px;
+    background-color: #F0BCD4;
+    padding: 10px;
+    border-radius: 15px;
+
+    .show-input-logo {
+        border-radius: 10px;
+        background-color: black;
+    }
+
+    .show-input-field {
+        background-color: transparent;
+        border: none;
+        color: #2C1320;
+        width: 100%;
+        font-weight: 500;
+
+        &::placeholder {
+            color: #2C1320;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+}
+
+.show-input-platforms {
+    background-color: #f0e6eb;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    display:none;
+
+    &.show {
+        display: flex;
+    }
+}
