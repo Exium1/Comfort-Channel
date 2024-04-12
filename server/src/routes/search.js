@@ -7,10 +7,13 @@ router.get('/', (req, res) => {
     res.send('/search');
 });
 
+/*
+	Search for a show given a platform and title. Called by front end to display options when searching
+*/
 router.get('/show', async (req, res) => {
 
 	const query = req.query.query;
-	const platform = req.query.platform;
+	const platform = req.query.platform.toLowerCase().trim();
 	
 	if (!query) {res.send("You need to provide a search query"); return;}
 	if (!platform) {res.send("You need to provide a platform"); return;}
@@ -37,7 +40,7 @@ router.get('/show/:id', async (req, res) => {
 
 	
 	const showID = req.params.id;
-	const platform = req.query.platform;
+	const platform = req.query.platform.toLowerCase().trim();
 	
 	if (!showID) {res.send("You need to provide a show ID"); return;}
 	if (!platform) {res.send("You need to provide a platform"); return;}
