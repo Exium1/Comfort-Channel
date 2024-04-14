@@ -1,7 +1,7 @@
 import axios from "axios";
 import mongoose from "mongoose";
 
-import Show from "../database/models/show.js";
+import showModel from "../database/models/show.js";
 
 const AvatarData = {
 	results: [
@@ -700,10 +700,12 @@ const SeinfeldData = {
 };
 
 const queryShows = async (query, normalize = true) => {
-	if (query.toLowerCase() === "avatar") {
-		if (normalize) return normalizeShows(AvatarData, "avatar");
-		else return AvatarData;
-	}
+	// if (query.toLowerCase() === "avatar") {
+	// 	if (normalize) return normalizeShows(AvatarData, "avatar");
+	// 	else return AvatarData;
+	// }
+
+    console.log(`Querying unogs for shows under "${query}"`)
 
 	const options = {
 		method: "GET",
@@ -721,8 +723,11 @@ const queryShows = async (query, normalize = true) => {
 	try {
 		const response = await axios.request(options);
 
-		if (normalize) return normalizeShows(response.data, query);
-		else return response.data;
+		if (normalize) {
+            const normalizedData = normalizeShows(response.data, query);
+            
+            return normalizedData;
+        } else return response.data;
 	} catch (error) {
 		console.error(error);
 	}
@@ -731,9 +736,9 @@ const queryShows = async (query, normalize = true) => {
 const normalizeShows = (data, query) => {
 	const results = data.results.map((result) => {
 		return {
-			platformID: result.nfid,
+			showID: result.nfid,
 			title: result.title,
-			img: result.img,
+			image: result.img,
 			poster: result.poster,
 			synopsis: result.synopsis,
 			releaseDate: result.titledate
@@ -749,11 +754,7 @@ const normalizeShows = (data, query) => {
 
 const queryEpisodes = async (netflixID, normalize = true) => {
 
-	const databaseShow = Show.findOne({ platform: "netflix", showID: netflixID });
-
-	if (databaseShow) return databaseShow;
-
-	// if (netflixID == 70142405) return AvatarEpisodes;
+    console.log(`Querying unogs for a show with ID: ${netflixID}`)
 
 	const options = {
 		method: "GET",
@@ -780,16 +781,14 @@ const queryEpisodes = async (netflixID, normalize = true) => {
 const normalizeEpisodes = (data, netflixID) => {
 	const seasons = data.map((season) => {
 		return {
-			seasonNum: season.season,
 			seasonID: season.episodes[0].seasid,
+			seasonNum: season.season,
 			episodes: season.episodes.map((episode) => {
 				return {
 					episodeID: episode.epid,
-					seasonID: episode.seasid,
-					title: episode.title,
-					img: episode.img,
 					episodeNum: episode.epnum,
-					seasonNum: episode.seasnum,
+					title: episode.title,
+					image: episode.img,
 					synopsis: episode.synopsis
 				};
 			})
@@ -802,5 +801,5 @@ const normalizeEpisodes = (data, netflixID) => {
 		seasons: seasons
 	};
 };
-
+ 
 export default { queryShows, queryEpisodes };

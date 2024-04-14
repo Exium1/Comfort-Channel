@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const episodeSchema = new mongoose.Schema({
     episodeID: {
-        type: Number,
+        type: String,
         required: true,
     },
     episodeNum: {
@@ -21,7 +21,7 @@ const episodeSchema = new mongoose.Schema({
         type: String,
         default: "",
     }
-});
+}, { _id : false });
 
 const seasonSchema = new mongoose.Schema({
     seasonID: {
@@ -36,10 +36,9 @@ const seasonSchema = new mongoose.Schema({
         type: [episodeSchema],
         default: [],
     },
-});
+}, { _id : false });
 
 const showSchema = new mongoose.Schema({
-    _id: String,
     platform: {
         type: String,
         required: true,        
@@ -51,6 +50,14 @@ const showSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,        
+    },
+    image: {
+        type: String,
+        default: "",
+    },
+    poster: {
+        type: String,
+        default: "",
     },
     synopsis: {
         type: String,

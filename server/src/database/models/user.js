@@ -13,15 +13,15 @@ const episodeSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-});
+}, { _id : false });
 
 const showSchema = new mongoose.Schema({
-    show_id: ObjectId,
+    show_id: mongoose.Schema.Types.ObjectId,
     selectedEpisodes: {
-        type: Array,
+        type: [episodeSchema],
         default: [],
     },
-});
+}, { _id : false });
 
 const userSchema = new mongoose.Schema({
     _id: String,
