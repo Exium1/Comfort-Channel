@@ -13,13 +13,12 @@ router.get('/', (req, res) => {
     Update a channel's show, season, or episode
 */
 router.post('/update', async (req, res) => {
-    res.send('Updating channel');
 
     const platform = req.query.platform;
     const showID = req.query.showID;
     const seasonID = req.query.seasonID;
     const episodeID = req.query.episodeID;
-    const select = req.query.select === "true" ? true : false;
+    const select = req.query.select === "true";
     const userID = req.headers.authorization.split(" ")[1];
 
     // Check if the required parameters are provided
@@ -67,14 +66,17 @@ router.post('/update', async (req, res) => {
     let show = null;
     let showIndex = null;
     
-    for (let [userShow, userShowIndex] of user.channel.entries()) {
-        if (userShow.show_id == dbShow._id) {
+    for (let [userShowIndex, userShow] of user.channel.entries()) {
+        if (userShow.show_id == dbShow._id.toString()) {
             show = userShow;
             showIndex = userShowIndex;
         }
     }
 
-    if (!show && !select) { res.status(200); return;}
+    if (!show && !select) {
+        res.sendStatus(200);
+        return;
+    }
 
     if(episodeID) {
         // update episode
@@ -89,6 +91,7 @@ router.post('/update', async (req, res) => {
                 }
 
                 user.channel[showIndex].selectedEpisodes.push({episodeID: episodeID, seasonID: seasonID});
+                user.save();
 
             } else {
                 user.channel.push({
@@ -101,6 +104,7 @@ router.post('/update', async (req, res) => {
         } else {
             // unselect episode
             user.channel[showIndex].selectedEpisodes.pull({episodeID: episodeID});
+            user.save();
         }
     } else {
         if(seasonID) {
@@ -136,6 +140,7 @@ router.post('/update', async (req, res) => {
             } else {
                 // unselect episode
                 user.channel[showIndex].selectedEpisodes.pull({seasonID: seasonID});
+                user.save();
             }
         } else {
             // update entire show
@@ -168,9 +173,12 @@ router.post('/update', async (req, res) => {
                 }
             } else {
                 user.channel.pull({show_id: dbShow._id});
+                user.save();
             }
         }
     }
+
+    res.sendStatus(200);
 });
 
 export default router;
