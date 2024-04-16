@@ -21,6 +21,10 @@ const showSchema = new mongoose.Schema({
         type: [episodeSchema],
         default: [],
     },
+    lastWatched: {
+        type: Date,
+        default: Date.now,
+    }
 }, { _id : false });
 
 const userSchema = new mongoose.Schema({

@@ -5,8 +5,118 @@ import showModel from '../database/models/show.js';
 
 const router = express.Router();
 
+function gaussian(x, mean, sd) {
+    return 1 / (sd * Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * ((x - mean) / sd) ** 2);
+}
+
+function weightedRandom(items, weights) {
+    var adjWeights = [weights[0]]
+
+    for (var i = 1; i < weights.length; i++) {
+        adjWeights.push(weights[i] + adjWeights[i - 1]);
+    }
+
+    var rand = Math.random() * adjWeights[adjWeights.length - 1];
+
+    for (var i = 0; i < adjWeights.length; i++) {
+        if (adjWeights[i] > rand) {
+            return items[i];
+        }
+    }
+
+    return null;
+}
+
 router.get('/', (req, res) => {
     res.send('/channel');
+});
+
+router.get('/next', async (req, res) => {
+
+    /*
+        - Two modes (shuffle and true shuffle)
+        - Sort channel shows by last watched
+        - Get only top 50% of these sorted shows (round up if decimal?)
+        - Get random one with weights (last watched)
+        - Same thing for the selected shows episodes
+    */
+
+    const userID = req.headers.authorization.split(" ")[1];
+    const user = await userModel.findById(userID);
+
+    if (!user) {
+        res.send("User not found");
+        return;
+    }
+
+    const sortedShows = user.channel.sort((a, b) => a.lastWatched - b.lastWatched);
+    const stepSize = sortedShows.length > 1 ? 1 / (sortedShows.length - 1) : 0;
+    const sortedShowsWeights = sortedShows.map((show, index) => gaussian(index * stepSize, 0, 0.4));
+    const randomShow = weightedRandom(sortedShows, sortedShowsWeights);
+
+    // const sortedShowTitle = []
+    
+    // for (let show of sortedShows) {
+    //     const dbShow = await showModel.findById(show.show_id);
+    //     sortedShowTitle.push(dbShow.title);
+    // }
+
+    // console.log(sortedShowTitle);
+    // console.log(sortedShowsWeights);
+
+    const sortedEpisodes = randomShow.selectedEpisodes.sort((a, b) => a.lastWatched - b.lastWatched);
+    const episodeStepSize = sortedEpisodes.length > 1 ? 1 / (sortedEpisodes.length - 1) : 0;
+    const sortedEpisodesWeights = sortedEpisodes.map((episode, index) => gaussian(index * episodeStepSize, 0, 0.25));
+    const randomEpisode = weightedRandom(sortedEpisodes, sortedEpisodesWeights);
+
+    if (!randomShow || !randomEpisode) {
+        res.send("No shows or episodes found");
+        return;
+    }
+
+    const show = await showModel.findById(randomShow.show_id);
+
+    if (!show) {
+        res.send("Show not found");
+        return;
+    }
+
+    // const sortedEpisodeTitle = []
+
+    // for (let episode of sortedEpisodes) {
+    //     const dbEpisode = show.seasons.find(season => season.seasonID == episode.seasonID).episodes.find(temp => temp.episodeID == episode.episodeID);
+    //     sortedEpisodeTitle.push(dbEpisode.title);
+    // }
+
+    // const randomEpisodeTitle = show.seasons.find(season => season.seasonID == randomEpisode.seasonID).episodes.find(temp => temp.episodeID == randomEpisode.episodeID).title;
+
+    // console.log(`Selected ${show.title}`);
+    // console.log(`Selected ${randomEpisodeTitle}`);
+    // console.log(sortedEpisodeTitle);
+    // console.log(sortedEpisodesWeights)
+
+    randomShow.lastWatched = Date.now();
+    randomEpisode.lastWatched = Date.now();
+
+    user.save();
+
+    switch (show.platform) {
+        case "netflix":
+            res.send(`https://www.netflix.com/watch/${show.showID}`);
+            break;
+        case "disney":
+            res.send(`https://www.disneyplus.com/video/${show.showID}/${randomEpisode.episodeID}`);
+            break;
+        case "hulu":
+            res.send(`https://www.hulu.com/watch/${show.showID}/${randomEpisode.episodeID}`);
+            break;
+        case "amazon":
+            res.send(`https://www.amazon.com/gp/video/detail/${show.showID}/ref=atv_dp_share_cu_r`);
+            break;
+        default:
+            res.send("Platform not found");
+            return;
+    }
 });
 
 /* 
