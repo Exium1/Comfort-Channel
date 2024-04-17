@@ -22,12 +22,12 @@ export const ShowCard = ({ show, viewEpsButton }: { show: any, viewEpsButton?: b
             <img
                 className="show-card-image"
                 src={show.image}
-                alt={show.name}
+                alt={show.title}
             />
             <div className="show-card-details">
-                <h2 className="show-card-title">{show.name}</h2>
+                <h2 className="show-card-title">{show.title}</h2>
                 <p className="show-card-episodes">{show.seasonCount} seasons, {show.episodeCount} episodes</p>
-                {viewEpsButton && <button className="show-card-view-episodes" onClick={() => navigate(`/shows/${show.id}`)}>View Episodes</button>}
+                {viewEpsButton && <button className="show-card-view-episodes" onClick={() => navigate(`/shows/${show.showID}`)}>View Episodes</button>}
             </div>
             <button className="show-card-button" onClick={handleAdd}>
                 {added == 0 ? <img src={BoxUnchecked} height={20} width={20} alt="Add"/>

@@ -41,6 +41,8 @@ router.get('/next', async (req, res) => {
         - Same thing for the selected shows episodes
     */
 
+    console.log("Received a request to get the next show");
+
     const userID = req.headers.authorization.split(" ")[1];
     const user = await userModel.findById(userID);
 
@@ -51,28 +53,35 @@ router.get('/next', async (req, res) => {
 
     const sortedShows = user.channel.sort((a, b) => a.lastWatched - b.lastWatched);
     const stepSize = sortedShows.length > 1 ? 1 / (sortedShows.length - 1) : 0;
-    const sortedShowsWeights = sortedShows.map((show, index) => gaussian(index * stepSize, 0, 0.4));
+    const sortedShowsWeights = sortedShows.map((show, index) => gaussian(index * stepSize, 0, 0.35));
     const randomShow = weightedRandom(sortedShows, sortedShowsWeights);
 
-    // const sortedShowTitle = []
+    const sortedShowTitle = []
     
-    // for (let show of sortedShows) {
-    //     const dbShow = await showModel.findById(show.show_id);
-    //     sortedShowTitle.push(dbShow.title);
-    // }
+    for (let show of sortedShows) {
+        const dbShow = await showModel.findById(show.show_id);
+        sortedShowTitle.push(dbShow.title);
+    }
 
-    // console.log(sortedShowTitle);
-    // console.log(sortedShowsWeights);
+    console.log(sortedShowTitle);
+    console.log(sortedShowsWeights);
+
+    if (!randomShow) {
+        res.send("No shows found");
+        return;
+    }
 
     const sortedEpisodes = randomShow.selectedEpisodes.sort((a, b) => a.lastWatched - b.lastWatched);
     const episodeStepSize = sortedEpisodes.length > 1 ? 1 / (sortedEpisodes.length - 1) : 0;
     const sortedEpisodesWeights = sortedEpisodes.map((episode, index) => gaussian(index * episodeStepSize, 0, 0.25));
     const randomEpisode = weightedRandom(sortedEpisodes, sortedEpisodesWeights);
 
-    if (!randomShow || !randomEpisode) {
-        res.send("No shows or episodes found");
+    if (!randomEpisode) {
+        res.send("No episodes found");
         return;
     }
+
+    // console.log(sortedEpisodes)
 
     const show = await showModel.findById(randomShow.show_id);
 
@@ -102,19 +111,19 @@ router.get('/next', async (req, res) => {
 
     switch (show.platform) {
         case "netflix":
-            res.send(`https://www.netflix.com/watch/${show.showID}`);
+            res.send({url: `https://www.netflix.com/watch/${randomEpisode.episodeID}`});
             break;
         case "disney":
-            res.send(`https://www.disneyplus.com/video/${show.showID}/${randomEpisode.episodeID}`);
+            res.send({url: `https://www.disneyplus.com/video/${randomShow.showID}/${randomEpisode.episodeID}`});
             break;
         case "hulu":
-            res.send(`https://www.hulu.com/watch/${show.showID}/${randomEpisode.episodeID}`);
+            res.send({url: `https://www.hulu.com/watch/${randomShow.showID}/${randomEpisode.episodeID}`});
             break;
         case "amazon":
-            res.send(`https://www.amazon.com/gp/video/detail/${show.showID}/ref=atv_dp_share_cu_r`);
+            res.send({url: `https://www.amazon.com/gp/video/detail/${randomEpisode.episodeID}/ref=atv_dp_share_cu_r`});
             break;
         default:
-            res.send("Platform not found");
+            res.status(400).send("Platform not supported");
             return;
     }
 });
@@ -249,6 +258,9 @@ router.post('/update', async (req, res) => {
                 }
             } else {
                 // unselect episode
+                console.log("here");
+                console.log(showIndex)
+                console.log(seasonID)
                 user.channel[showIndex].selectedEpisodes.pull({seasonID: seasonID});
                 user.save();
             }

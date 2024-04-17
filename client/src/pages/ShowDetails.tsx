@@ -1,6 +1,6 @@
-import { Popup } from "~src/components/Popup/Popup"
-import { ShowCard } from "~src/components/ShowCard/ShowCard";
-import { ShowEpisodes } from "~src/components/ShowEpisodes/ShowEpisodes";
+import { Popup } from "~components/Popup/Popup"
+import { ShowCard } from "~components/ShowCard/ShowCard";
+import { ShowEpisodes } from "~components/ShowEpisodes/ShowEpisodes";
 
 export const ShowDetails = () => {
 

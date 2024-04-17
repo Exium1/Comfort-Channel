@@ -34,7 +34,7 @@ export const ShowInput = ({handleQuery} : {handleQuery: any}) => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-        handleQuery(searchValue)
+        handleQuery(searchValue, selectedPlatforms)
     }
   }
 
