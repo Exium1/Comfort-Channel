@@ -18,6 +18,9 @@ function weightedRandom(items, weights) {
 
     var rand = Math.random() * adjWeights[adjWeights.length - 1];
 
+    // console.log(adjWeights);
+    // console.log(rand);
+
     for (var i = 0; i < adjWeights.length; i++) {
         if (adjWeights[i] > rand) {
             return items[i];
@@ -53,7 +56,7 @@ router.get('/next', async (req, res) => {
 
     const sortedShows = user.channel.sort((a, b) => a.lastWatched - b.lastWatched);
     const stepSize = sortedShows.length > 1 ? 1 / (sortedShows.length - 1) : 0;
-    const sortedShowsWeights = sortedShows.map((show, index) => gaussian(index * stepSize, 0, 0.35));
+    const sortedShowsWeights = sortedShows.map((show, index) => gaussian(index * stepSize, 0, 0.3));
     const randomShow = weightedRandom(sortedShows, sortedShowsWeights);
 
     const sortedShowTitle = []
@@ -63,8 +66,8 @@ router.get('/next', async (req, res) => {
         sortedShowTitle.push(dbShow.title);
     }
 
-    console.log(sortedShowTitle);
-    console.log(sortedShowsWeights);
+    // console.log(sortedShowTitle);
+    // console.log(sortedShowsWeights);
 
     if (!randomShow) {
         res.send("No shows found");
@@ -73,8 +76,10 @@ router.get('/next', async (req, res) => {
 
     const sortedEpisodes = randomShow.selectedEpisodes.sort((a, b) => a.lastWatched - b.lastWatched);
     const episodeStepSize = sortedEpisodes.length > 1 ? 1 / (sortedEpisodes.length - 1) : 0;
-    const sortedEpisodesWeights = sortedEpisodes.map((episode, index) => gaussian(index * episodeStepSize, 0, 0.25));
+    const sortedEpisodesWeights = sortedEpisodes.map((episode, index) => gaussian(index * episodeStepSize, 0, 0.15));
     const randomEpisode = weightedRandom(sortedEpisodes, sortedEpisodesWeights);
+
+    // console.log(sortedEpisodesWeights)
 
     if (!randomEpisode) {
         res.send("No episodes found");
@@ -258,9 +263,6 @@ router.post('/update', async (req, res) => {
                 }
             } else {
                 // unselect episode
-                console.log("here");
-                console.log(showIndex)
-                console.log(seasonID)
                 user.channel[showIndex].selectedEpisodes.pull({seasonID: seasonID});
                 user.save();
             }
